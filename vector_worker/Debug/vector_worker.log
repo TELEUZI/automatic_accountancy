@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\ikkpo\source\repos\vector_worker\vector_worker\main.cpp(152,17): warning C4018: <=: несоответствие типов со знаком и без знака
+C:\Users\ikkpo\source\repos\vector_worker\vector_worker\main.cpp(315,23): warning C4018: <: несоответствие типов со знаком и без знака
+  vector_worker.vcxproj -> C:\Users\ikkpo\source\repos\vector_worker\Debug\vector_worker.exe
