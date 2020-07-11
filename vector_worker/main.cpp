@@ -1,66 +1,65 @@
-#include <algorithm>
-#include <numeric>
-#include <locale.h>
-#include <stdlib.h>
-#include <Windows.h>
+#include "library's.h"
 #include "worker.h"
 
 using namespace std;
 
 
-int alternative_answer();
 void show(vector<worker>& workers);
 void show_if(vector<worker>& workers);
 void sort(vector<worker>& workers);
 void find(vector<worker>& workers);
 void add_new_worker(vector<worker>& workers);
-void delete_worker(vector<worker>& workers);
 void new_workers(vector<worker>& workers, int n);
+void delete_worker(vector<worker>& workers);
+void median_and_whole_salary(vector<worker>& workers);
+
 void read_from_database(vector<worker>& workers_from_database, string path, int num);
 void write_into_database(vector<worker>& workers, string path);
 int find_out_number_of_workers_in_database(string path);
 void update_number_of_workers_in_database(string path, int num);
-void median_and_whole_salary(vector<worker>& workers);
+
 void check_cin();
+int alternative_answer();
+
 
 int main() {
 	setlocale(LC_ALL, "RUS");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	//–ø–æ–¥–≥—Ä—É–∂–∞–µ–º –±–∞–∑—É –¥–∞–Ω–Ω—ã—Ö
+	//ÔÓ‰„ÛÊ‡ÂÏ ·‡ÁÛ ‰‡ÌÌ˚ıÛ 
 	vector<worker> workers;
-	int menu_answer, number_of_workers = find_out_number_of_workers_in_database("1.txt");
+	int menu_answer, number_of_workers = find_out_number_of_workers_in_database("number_of_workers_in_database.txt");
 	int amount_of_added_workers = 0;
 	if (number_of_workers) {
 		vector<worker> workers_from_database;
-		read_from_database(workers_from_database, "1.txt", number_of_workers);
+		read_from_database(workers_from_database, "number_of_workers_in_database.txt", number_of_workers);
 		auto iter = workers.cbegin();
 		workers.insert(iter, workers_from_database.begin(), workers_from_database.end());
 	}
 
 
-	cout << "–î–æ–±—Ä–æ –ø–æ–∂–∞–ª–æ–≤–∞—Ç—å. –í —Ç–µ–∫—É—â–µ–π –±–∞–∑–µ –¥–∞–Ω–Ω—ã—Ö —á–∏—Å–ª–æ —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤ " << number_of_workers << ". –•–æ—Ç–∏—Ç–µ –¥–æ–±–∞–≤–∏—Ç—å –µ—â—ë?\n1)–î–∞\n2)–ù–µ—Ç\n";
+	cout << "ƒÓ·Ó ÔÓÊ‡ÎÓ‚‡Ú¸. ¬ ÚÂÍÛ˘ÂÈ ·‡ÁÂ ‰‡ÌÌ˚ı ˜ËÒÎÓ ‡·ÓÚÌËÍÓ‚ " << number_of_workers << ". ’ÓÚËÚÂ ‰Ó·‡‚ËÚ¸ Â˘∏?\n1 ó ƒ‡\n2 ó ÕÂÚ\n";
 	if (alternative_answer() == 1) {
-		cout << "–í–≤–µ–¥–∏—Ç–µ —á–∏—Å–ª–æ —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤: " << endl;
+		cout << "¬‚Â‰ËÚÂ ˜ËÒÎÓ ‡·ÓÚÌËÍÓ‚: " << endl;
 		cin >> amount_of_added_workers;
 		if (amount_of_added_workers <= 0 || cin.fail()) {
-			cout << "–ò–Ω—Ñ–æ—Ä–º–∞—Ü–∏—è –≤–≤–µ–¥–µ–Ω–∞ –Ω–µ–≤–µ—Ä–Ω–æ" << endl;
+			cout << "»ÌÙÓÏ‡ˆËˇ ‚‚Â‰ÂÌ‡ ÌÂ‚ÂÌÓ" << endl;
 			exit(1);
 		}
 		number_of_workers += amount_of_added_workers;
 		new_workers(workers, amount_of_added_workers);
-		cout << "–í–≤–µ–¥—ë–Ω–Ω—ã–µ –≤–∞–º–∏ —Ä–∞–±–æ—Ç–Ω–∏–∫–∏: " << endl;
+		cout << "¬‚Â‰∏ÌÌ˚Â ‚‡ÏË ‡·ÓÚÌËÍË: " << endl;
 		show(workers);
 	}
 
-	//–≥–ª–∞–≤–Ω–æ–µ –º–µ–Ω—é –ø—Ä–æ–≥—Ä–∞–º–º—ã
+	//„Î‡‚ÌÓÂ ÏÂÌ˛ ÔÓ„‡ÏÏ˚
 	while (true) {
-		cout << "\n\n1)–ü–æ–∫–∞–∑–∞—Ç—å –≤—Å–µ—Ö —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤\n2)–ü–æ–∫–∞–∑ —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤ –ø–æ –∑–∞–¥–∞–Ω–Ω–æ–º—É —É—Å–ª–æ–≤–∏—é\n3)–°–æ—Ä—Ç–∏—Ä–æ–≤–∫–∞\n4)–ü–æ–∏—Å–∫\n5)–£–¥–∞–ª–µ–Ω–∏–µ —Ä–∞–±–æ—Ç–Ω–∏–∫–∞ –∏–∑ –±–∞–∑—ã\n6)–î–æ–±–∞–≤–ª–µ–Ω–∏–µ –Ω–æ–≤–æ–≥–æ —Ä–∞–±–æ—Ç–Ω–∏–∫–∞\n7)–¢–µ–∫—É—â–∞—è –æ–±—â–∞—è —Å—É–º–º–∞ –≤—ã–ø–ª–∞—Ç –∏ —Å—Ä–µ–¥–Ω–∏–π –æ–∫–ª–∞–¥ –∑–∞ –º–µ—Å—è—Ü –≤ –æ—Ç–¥–µ–ª–µ\n8)–í—ã—Ö–æ–¥ –∏–∑ –ø—Ä–æ–≥—Ä–∞–º–º—ã\n" << endl;
+		cout << "\n\n1 ó œÓÍ‡Á‡Ú¸ ‚ÒÂı ‡·ÓÚÌËÍÓ‚\n2 ó œÓÍ‡Á ‡·ÓÚÌËÍÓ‚ ÔÓ Á‡‰‡ÌÌÓÏÛ ÛÒÎÓ‚Ë˛\n3 ó —ÓÚËÓ‚Í‡\n4 ó œÓËÒÍ\n5 ó ”‰‡ÎÂÌËÂ ‡·ÓÚÌËÍ‡ ËÁ ·‡Á˚\n6 ó ƒÓ·‡‚ÎÂÌËÂ ÌÓ‚Ó„Ó ‡·ÓÚÌËÍ‡\n7 ó “ÂÍÛ˘‡ˇ Ó·˘‡ˇ ÒÛÏÏ‡ ‚˚ÔÎ‡Ú Ë ÒÂ‰ÌËÈ ÓÍÎ‡‰ Á‡ ÏÂÒˇˆ ‚ ÓÚ‰ÂÎÂ\n8 ó ¬˚ıÓ‰ ËÁ ÔÓ„‡ÏÏ˚\n" << endl;
 		cin >> menu_answer;
 		check_cin();
 		if (!number_of_workers && menu_answer != 6) {
-			cout << "–û—à–∏–±–∫–∞! –í –±–∞–∑–µ –¥–∞–Ω–Ω—ã—Ö –Ω–µ—Ç –Ω–∏ –æ–¥–Ω–æ–≥–æ —á–µ–ª–æ–≤–µ–∫–∞. –†–∞–±–æ—Ç–∞ –ø—Ä–æ–≥—Ä–∞–º–º—ã –Ω–µ–≤–æ–∑–º–æ–∂–Ω–∞. –í–≤–µ–¥–∏—Ç–µ —Ö–æ—Ç—è –±—ã –æ–¥–Ω–æ–≥–æ —Å–æ—Ç—Ä—É–¥–Ω–∏–∫–∞." << endl;
+			cout << "Œ¯Ë·Í‡! ¬ ·‡ÁÂ ‰‡ÌÌ˚ı ÌÂÚ ÌË Ó‰ÌÓ„Ó ˜ÂÎÓ‚ÂÍ‡. –‡·ÓÚ‡ ÔÓ„‡ÏÏ˚ ÌÂ‚ÓÁÏÓÊÌ‡. ¬‚Â‰ËÚÂ ıÓÚˇ ·˚ Ó‰ÌÓ„Ó ÒÓÚÛ‰ÌËÍ‡." << endl;
 			menu_answer = 8;
 		}
 		switch (menu_answer) {
@@ -81,60 +80,55 @@ int main() {
 		case 7:
 			median_and_whole_salary(workers); break;
 		case 8:
-			cout << "–ë–ª–∞–≥–æ–¥–∞—Ä–∏–º –∑–∞ –∏—Å–ø–æ–ª—å–∑–æ–≤–∞–Ω–∏–µ –Ω–∞—à–µ–π –ø—Ä–æ–≥—Ä–∞–º–º—ã." << endl;
-			write_into_database(workers, "file.dat");
-			update_number_of_workers_in_database("1.txt", workers.size());
+			cout << "¡Î‡„Ó‰‡ËÏ Á‡ ËÒÔÓÎ¸ÁÓ‚‡ÌËÂ Ì‡¯ÂÈ ÔÓ„‡ÏÏ˚." << endl;
+			write_into_database(workers, "database.bin");
+			update_number_of_workers_in_database("number_of_workers_in_database.txt", workers.size());
 			exit(0);
 		default:
-			cout << "–í –º–µ–Ω—é —Ç–∞–∫–æ–≥–æ –ø—É–Ω–∫—Ç–∞ –Ω–µ—Ç!" << endl;
+			cout << "¬ ÏÂÌ˛ Ú‡ÍÓ„Ó ÔÛÌÍÚ‡ ÌÂÚ!" << endl;
 		}
 	}
 }
 
-//—Ç–µ–ª–∞ —Ñ—É–Ω–∫—Ü–∏–π
-void check_cin() {
-	if (cin.fail()) {
-		cout << "–ò–Ω—Ñ–æ—Ä–º–∞—Ü–∏—è –≤–≤–µ–¥–µ–Ω–∞ –Ω–µ–≤–µ—Ä–Ω–æ." << endl;
-		exit(1);
-	}
-}
 
+//ÚÂÎ‡ ÙÛÌÍˆËÈ
 void add_new_worker(vector<worker>& workers) {
-	worker v1;
+	worker new_worker;
 	string name, surname, fathername, department;
 	double salary;
-	cout << "–í–≤–µ–¥–∏—Ç–µ –ø–æ—Å–ª–µ–¥–æ–≤–∞—Ç–µ–ª—å–Ω–æ: —Ñ–∞–º–∏–ª–∏—é, –∏–º—è, –æ—Ç—á–µ—Å—Ç–≤–æ, –Ω–∞–∑–≤–∞–Ω–∏–µ –æ—Ç–¥–µ–ª–∞, –∞ —Ç–∞–∫–∂–µ –∑–∞—Ä–ø–ª–∞—Ç—É" << endl;
+	cout << "¬‚Â‰ËÚÂ ÔÓÒÎÂ‰Ó‚‡ÚÂÎ¸ÌÓ: Ù‡ÏËÎË˛, ËÏˇ, ÓÚ˜ÂÒÚ‚Ó, Ì‡Á‚‡ÌËÂ ÓÚ‰ÂÎ‡, ‡ Ú‡ÍÊÂ Á‡ÔÎ‡ÚÛ" << endl;
 	cin >> surname >> name >> fathername >> department >> salary;
-	if (cin.fail())
-	{
-		cout << "–ù–µ–≤–µ—Ä–Ω—ã–π –≤–≤–æ–¥! –í —Å–ª–µ–¥—É—é—â–∏–π —Ä–∞–∑ –±—É–¥—å—Ç–µ –∞–∫–∫—É—Ä–∞—Ç–Ω–µ–µ." << endl;
-		exit(1);
+	check_cin();
+	new_worker.set_name(name);
+	new_worker.set_surname(surname);
+	new_worker.set_fathername(fathername);
+	new_worker.set_department(department);
+	new_worker.set_salary(salary);
+	workers.push_back(new_worker);
+}
+
+void new_workers(vector<worker>& workers, int n) {
+	for (int i = 0; i < n; i++) {
+		add_new_worker(workers);
 	}
-	v1.set_name(name);
-	v1.set_surname(surname);
-	v1.set_fathername(fathername);
-	v1.set_department(department);
-	v1.set_salary(salary);
-	workers.push_back(v1);
 }
 
 void show(vector<worker>& workers) {
 	int i = 0;
 	for (worker n : workers) {
 		cout << ++i << ")";
-		cout << "–§–ò–û: " << n.get_surname() << " " << n.get_name() << " " << n.get_fathername() << "\t–ù–∞–∑–≤–∞–Ω–∏–µ –æ—Ç–¥–µ–ª–∞: " << n.get_department() << "\t–†–∞–∑–º–µ—Ä –∑–∞—Ä–∞–±–æ—Ç–Ω–æ–π –ø–ª–∞—Ç—ã: " << n.get_salary() << endl;
-	}
-		
+		cout << "‘»Œ: " << n.get_surname() << " " << n.get_name() << " " << n.get_fathername() << "\tÕ‡Á‚‡ÌËÂ ÓÚ‰ÂÎ‡: " << n.get_department() << "\t–‡ÁÏÂ Á‡‡·ÓÚÌÓÈ ÔÎ‡Ú˚: " << n.get_salary() << endl;
+	}	
 	cout << endl;
 }
 
 void show_if(vector<worker> &workers) {
 	double x;
 	vector<worker> result;
-	cout << "–í–≤–µ–¥–∏—Ç–µ –∂–µ–ª–∞–µ–º—ã–π —Ä–∞–∑–º–µ—Ä –∑–∞—Ä–ø–ª–∞—Ç—ã –≤ –∫–∞—á–µ—Å—Ç–≤–µ —É—Å–ª–æ–≤–∏—è" << endl;
+	cout << "¬‚Â‰ËÚÂ ÊÂÎ‡ÂÏ˚È ‡ÁÏÂ Á‡ÔÎ‡Ú˚ ‚ Í‡˜ÂÒÚ‚Â ÛÒÎÓ‚Ëˇ" << endl;
 	cin >> x;
 	check_cin();
-	cout << "1)–í—ã–≤–µ—Å—Ç–∏ —Å–æ—Ç—Ä—É–¥–Ω–∏–∫–æ–≤ –æ—Ç–¥–µ–ª–∞, –∑–∞—Ä–ø–ª–∞—Ç–∞ –∫–æ—Ç–æ—Ä—ã—Ö –±–æ–ª—å—à–µ, –ª–∏–±–æ —Ä–∞–≤–Ω–∞ –≤–≤–µ–¥—ë–Ω–Ω–æ–º—É –∑–Ω–∞—á–µ–Ω–∏—é \n2)–í—ã–≤–µ—Å—Ç–∏ —Å–æ—Ç—Ä—É–¥–Ω–∏–∫–æ–≤ –æ—Ç–¥–µ–ª–∞, –∑–∞—Ä–ø–ª–∞—Ç–∞ –∫–æ—Ç–æ—Ä—ã—Ö –º–µ–Ω—å—à–µ, –ª–∏–±–æ —Ä–∞–≤–Ω–∞ –≤–≤–µ–¥—ë–Ω–Ω–æ–º—É –∑–Ω–∞—á–µ–Ω–∏—é" << endl;
+	cout << "1)¬˚‚ÂÒÚË ÒÓÚÛ‰ÌËÍÓ‚ ÓÚ‰ÂÎ‡, Á‡ÔÎ‡Ú‡ ÍÓÚÓ˚ı ·ÓÎ¸¯Â, ÎË·Ó ‡‚Ì‡ ‚‚Â‰∏ÌÌÓÏÛ ÁÌ‡˜ÂÌË˛ \n2)¬˚‚ÂÒÚË ÒÓÚÛ‰ÌËÍÓ‚ ÓÚ‰ÂÎ‡, Á‡ÔÎ‡Ú‡ ÍÓÚÓ˚ı ÏÂÌ¸¯Â, ÎË·Ó ‡‚Ì‡ ‚‚Â‰∏ÌÌÓÏÛ ÁÌ‡˜ÂÌË˛" << endl;
 	int answer = alternative_answer();
 	copy_if(workers.begin(), workers.end(), back_inserter(result), [&x, &answer](const worker &p1) {
 		if (answer == 1) {
@@ -150,26 +144,27 @@ void show_if(vector<worker> &workers) {
 void delete_worker(vector<worker>& workers) {
 	int x;
 	show(workers);
-	cout << "–í—ã–±–µ—Ä–∏—Ç–µ –Ω–æ–º–µ—Ä —Ä–∞–±–æ—Ç–Ω–∏–∫–∞, –∫–æ—Ç–æ—Ä–æ–≥–æ —Ö–æ—Ç–∏—Ç–µ —É–¥–∞–ª–∏—Ç—å –∏–∑ –±–∞–∑—ã" << endl;
+	cout << "¬˚·ÂËÚÂ ÌÓÏÂ ‡·ÓÚÌËÍ‡, ÍÓÚÓÓ„Ó ıÓÚËÚÂ Û‰‡ÎËÚ¸ ËÁ ·‡Á˚" << endl;
 	cin >> x;
+	check_cin();
 	if (x > 0 && x <= workers.size()) {
 		auto iter1 = workers.begin() + x - 1;
 		workers.erase(iter1);
-		cout << "–ù–æ–≤–∞—è –≤–µ—Ä—Å–∏—è –±–∞–∑—ã –¥–∞–Ω–Ω—ã—Ö –≤—ã–≥–ª—è–¥–∏—Ç —Ç–∞–∫:" << endl;
+		cout << "ÕÓ‚‡ˇ ‚ÂÒËˇ ·‡Á˚ ‰‡ÌÌ˚ı ‚˚„Îˇ‰ËÚ Ú‡Í:" << endl;
 		show(workers);
 	}
 	else {
-		cout << "–û—à–∏–±–∫–∞ –≤–≤–æ–¥–∞!";
+		cout << "Œ¯Ë·Í‡ ‚‚Ó‰‡!";
 		exit(1);
 	}
 }
 
 void sort(vector<worker>& workers) {
 	int answer_1, answer_2;
-	cout << "–í—ã–±–µ—Ä–∏—Ç–µ –ø–æ–ª–µ –¥–ª—è —Å–æ—Ä—Ç–∏—Ä–æ–≤–∫–∏:\n1)–ü–æ –∏–º–µ–Ω–∏\n2)–ü–æ —Ñ–∞–º–∏–ª–∏–∏\n3)–ü–æ –æ—Ç—á–µ—Å—Ç–≤—É\n4)–ü–æ –∑–∞—Ä–ø–ª–∞—Ç–µ" << endl;
+	cout << "¬˚·ÂËÚÂ ÔÓÎÂ ‰Îˇ ÒÓÚËÓ‚ÍË:\n1)œÓ ËÏÂÌË\n2)œÓ Ù‡ÏËÎËË\n3)œÓ ÓÚ˜ÂÒÚ‚Û\n4)œÓ Á‡ÔÎ‡ÚÂ" << endl;
 	cin >> answer_1;
 	check_cin();
-	cout << "–í—ã–±–µ—Ä–∏—Ç–µ —Ä–µ–∂–∏–º —Å–æ—Ä—Ç–∏—Ä–æ–≤–∫–∏:\n1)–ü–æ —É–±—ã–≤–∞–Ω–∏—é\n2)–ü–æ –≤–æ–∑—Ä–∞—Å—Ç–∞–Ω–∏—é" << endl;
+	cout << "¬˚·ÂËÚÂ ÂÊËÏ ÒÓÚËÓ‚ÍË:\n1)œÓ Û·˚‚‡ÌË˛\n2)œÓ ‚ÓÁ‡ÒÚ‡ÌË˛" << endl;
 	answer_2 = alternative_answer();
 	switch (answer_1)
 	{
@@ -210,24 +205,25 @@ void sort(vector<worker>& workers) {
 		}); break;
 
 	default:
-		cout << "–ù–µ–ø—Ä–∞–≤–∏–ª—å–Ω—ã–π –≤–≤–æ–¥!" << endl;
+		cout << "ÕÂÔ‡‚ËÎ¸Ì˚È ‚‚Ó‰!" << endl;
 		exit(1);
 	}
 }
 
 void find(vector<worker>& workers) {
 	int answer;
-	cout << "–í—ã–±–µ—Ä–∏—Ç–µ –ø–æ–ª–µ –¥–ª—è —Å–æ—Ä—Ç–∏—Ä–æ–≤–∫–∏:\n1)–ü–æ –∏–º–µ–Ω–∏\n2)–ü–æ —Ñ–∞–º–∏–ª–∏–∏\n3)–ü–æ –æ—Ç—á–µ—Å—Ç–≤—É\n4)–ü–æ –∑–∞—Ä–ø–ª–∞—Ç–µ" << endl;
+	cout << "¬˚·ÂËÚÂ ÔÓÎÂ ‰Îˇ ÒÓÚËÓ‚ÍË:\n1)œÓ ËÏÂÌË\n2)œÓ Ù‡ÏËÎËË\n3)œÓ ÓÚ˜ÂÒÚ‚Û\n4)œÓ Á‡ÔÎ‡ÚÂ" << endl;
 	cin >> answer;
 	check_cin();
 	string x;
 	double y;
-	cout << "–í–≤–µ–¥–∏—Ç–µ –Ω—É–∂–Ω—ã–π –ø–∞—Ä–∞–º–µ—Ç—Ä" << endl;
+	cout << "¬‚Â‰ËÚÂ ÌÛÊÌ˚È Ô‡‡ÏÂÚ" << endl;
 	if (answer != 4) {
 		cin >> x;
 	}
 	else {
 		cin >> y;
+		check_cin();
 	}
 	vector<worker> result;
 	switch (answer)
@@ -249,10 +245,72 @@ void find(vector<worker>& workers) {
 			return (p.get_salary() == y);
 			}); break;
 	default:
-		cout << "–ù–µ–ø—Ä–∞–≤–∏–ª—å–Ω—ã–π –≤–≤–æ–¥!" << endl;
+		cout << "ÕÂÔ‡‚ËÎ¸Ì˚È ‚‚Ó‰!" << endl;
 		exit(1);
 	}
 	show(result);
+}
+
+void median_and_whole_salary(vector<worker>& workers) {
+	double result = accumulate(workers.begin(), workers.end(), 0.0, [](double res, const worker& p1) {
+		return res + p1.get_salary();
+		});
+	cout << "Œ·˘‡ˇ ÒÛÏÏ‡ ‚˚ÔÎ‡Ú ÔÓ ÓÚ‰ÂÎÛ Á‡ ÏÂÒˇˆ ‡‚Ì‡ " << result << endl;
+	cout << "—Â‰Ìˇˇ Á‡ÔÎ‡Ú‡ ‚ ÓÚ‰ÂÎÂ ‡‚Ì‡ " << result / workers.size() << endl;
+}
+
+int find_out_number_of_workers_in_database(string path) {
+	ifstream fin;
+	fin.open(path);
+	if (fin.is_open()) {
+		string str;
+		getline(fin, str);
+		return atoi(str.c_str());
+	}
+	else {
+		cout << "ÕÂ Û‰‡ÎÓÒ¸ ÛÁÌ‡Ú¸ ÚÂÍÛ˘ÂÂ ˜ËÒÎÓ ‡·ÓÚÌËÍÓ‚";
+		exit(1);
+	}
+	fin.close();
+}
+
+void update_number_of_workers_in_database(string path, int num) {
+	ofstream fout;
+	fout.open(path);
+	if (fout.is_open()) {
+		fout << num;
+		cout << "—Óı‡ÌÂÌËÂ ËÁÏÂÌÂÌËÈ...\n";
+	}
+	else {
+		cout << "ÕÂ Û‰‡ÎÓÒ¸ Ó·ÌÓ‚ËÚ¸ ËÌÙÓÏ‡ˆË˛!";
+	}
+	fout.close();
+}
+
+void write_into_database(vector<worker>& actual_workers, string path) {
+	ofstream file("database.bin", ios::binary | ios::app);
+	for (worker n : actual_workers) {
+		n.write(file);
+	}
+	file.close();
+}
+
+void read_from_database(vector<worker>& workers_from_database, string path, int num) {
+	worker database_worker;
+	ifstream file1("database.bin", ios::binary | ios::app);
+	for (int i = 0; i < num; i++)
+	{
+		database_worker.read(file1);
+		workers_from_database.push_back(database_worker);
+	}
+	file1.close();
+}
+
+void check_cin() {
+	if (cin.fail()) {
+		cout << "»ÌÙÓÏ‡ˆËˇ ‚‚Â‰ÂÌ‡ ÌÂ‚ÂÌÓ." << endl;
+		exit(1);
+	}
 }
 
 int alternative_answer() {
@@ -265,69 +323,7 @@ int alternative_answer() {
 		return 2;
 	}
 	else {
-		cout << "–ù–µ–ø—Ä–∞–≤–∏–ª—å–Ω—ã–π –≤–≤–æ–¥! –í —Å–ª–µ–¥—É—é—â–∏–π —Ä–∞–∑ –≤–≤–æ–¥–∏—Ç–µ —á–∏—Å–ª–∞ 1 –∏–ª–∏ 2." << endl;
+		cout << "ÕÂÔ‡‚ËÎ¸Ì˚È ‚‚Ó‰! ¬ ÒÎÂ‰Û˛˘ËÈ ‡Á ‚‚Ó‰ËÚÂ ˜ËÒÎ‡ 1 ËÎË 2." << endl;
 		exit(1);
 	}
 }
-
-void new_workers(vector<worker>& workers, int n) { //–≤–≤–æ–¥ –¥–∞–Ω–Ω—ã—Ö –¥–ª—è –Ω–µ—Å–∫–æ–ª—å–∫–∏—Ö —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤
-	for (int i = 0; i < n; i++) {
-		add_new_worker(workers);
-	}
-}
-
-int find_out_number_of_workers_in_database(string path) {
-	ifstream fin;
-	fin.open(path);
-	if (fin.is_open()) {
-		string str;
-		getline(fin, str);
-		return atoi(str.c_str());
-	}
-	else {
-		cout << "–ù–µ —É–¥–∞–ª–æ—Å—å —É–∑–Ω–∞—Ç—å —Ç–µ–∫—É—â–µ–µ —á–∏—Å–ª–æ —Ä–∞–±–æ—Ç–Ω–∏–∫–æ–≤";
-		exit(1);
-	}
-	fin.close();
-}
-
-void update_number_of_workers_in_database(string path, int num) {
-	ofstream fout;
-	fout.open("1.txt");
-	if (fout.is_open()) {
-		fout << num;
-		cout << "–°–æ—Ö—Ä–∞–Ω–µ–Ω–∏–µ –∏–∑–º–µ–Ω–µ–Ω–∏–π...\n";
-	}
-	else {
-		cout << "–ù–µ —É–¥–∞–ª–æ—Å—å –æ–±–Ω–æ–≤–∏—Ç—å –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏—é!";
-	}
-	fout.close();
-}
-
-void write_into_database(vector<worker>& actual_workers, string path) {
-	ofstream file("file.bin", ios::binary | ios::app);
-	for (worker n : actual_workers) {
-		n.write(file);
-	}
-	file.close();
-}
-
-void read_from_database(vector<worker>& workers_from_database, string path, int num) {
-	worker v3;
-	ifstream file1("file.bin", ios::binary | ios::app);
-	for (size_t i = 0; i < num; i++)
-	{
-		v3.read(file1);
-		workers_from_database.push_back(v3);
-	}
-	file1.close();
-}
-
-void median_and_whole_salary(vector<worker>& workers) {
-	double result = accumulate(workers.begin(), workers.end(), 0.0, [](double res, const worker& p1) {
-		return res + p1.get_salary();
-		});
-	cout << "–û–±—â–∞—è —Å—É–º–º–∞ –≤—ã–ø–ª–∞—Ç –ø–æ –æ—Ç–¥–µ–ª—É –∑–∞ –º–µ—Å—è—Ü —Ä–∞–≤–Ω–∞ " << result << endl;
-	cout << "–°—Ä–µ–¥–Ω—è—è –∑–∞—Ä–ø–ª–∞—Ç–∞ –≤ –æ—Ç–¥–µ–ª–µ —Ä–∞–≤–Ω–∞ " << result / workers.size() << endl;
-}
-
