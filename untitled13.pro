@@ -1,5 +1,5 @@
 QT       += core gui
-
+ QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -10,7 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     context.cpp \
-    database.cpp \
+    db.cpp \
     main.cpp \
     mainwindow.cpp \
     strategy.cpp \
@@ -18,7 +18,7 @@ SOURCES += \
 
 HEADERS += \
     context.h \
-    database.h \
+    db.h \
     libraries.h \
     mainwindow.h \
     strategy.h \
@@ -33,5 +33,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    database.bin \
-    number_of_workers_in_database.txt
+    dump.sqlite

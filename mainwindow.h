@@ -6,8 +6,8 @@
 #include "database.h"
 #include "strategy.h"
 #include "context.h"
+#include "db.h"
 #include "QMessageBox"
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -26,7 +26,7 @@ private slots:
     void set_tables(QTableWidget *z, vector<worker>& result,int number_of_workers);
     void delete_worker();
     void show_if();
-    double median_and_whole_salary();
+    double average_and_whole_salary();
     void add_new_worker(string*,double);
     vector<worker> find(string, int);
 

@@ -61,46 +61,5 @@ istream& operator>> (istream& input, worker& ob)
 	return input;
 }
 
-void worker::write(ostream& os)
-{
-	os.write((char*)&salary, sizeof(salary)); 
-	string z = name + " " + surname + " " + fathername + " " + department;
-	size_t len = z.length() + 1;       
-	os.write((char*)&len, sizeof(len)); 
-	os.write((char*)z.c_str(), len);
-    os.write((char*)'\n', sizeof(char));
-}
 
-void worker::read(istream& in)
-{
-	in.read((char*)&salary, sizeof(salary));   
-	size_t len;                         
-	in.read((char*)&len, sizeof(len));  
-
-    string p ;
-    getline(in, p);
-    char* buf = new char[len];
-    in.read(buf, len);
-    p = strtok(buf, " ");
-	for (int i = 0; i < 4; i++)
-	{
-		if (i == 0) {
-			name = p;
-            p = strtok(NULL, " ");
-		}
-		if (i == 1) {
-			surname = p;
-			p = strtok(NULL, " ");
-		}
-		if (i == 2) {
-			fathername = p;
-			p = strtok(NULL, " ");
-		}
-		if (i == 3) {
-			department = p;
-			p = strtok(NULL, " ");
-		}
-	}
-	delete[]buf;
-};
 

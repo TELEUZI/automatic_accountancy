@@ -27,6 +27,4 @@ public:
 	void set_salary(double);
 	friend ostream& operator<<(ostream& output, const worker& ob);
 	friend istream& operator>>(istream& input, worker& ob);
-	void write(ostream& os);
-	void read(istream& in);
 };

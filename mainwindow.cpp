@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 
 using namespace std;
-Database& dataobj = Database::getInstance();
-int number_of_workers = dataobj.find_out_number_of_workers_in_database("number_of_workers_in_database.txt");
+DB& db1 = DB::getInstance();
+int number_of_workers = db1.find_out_number_of_workers_in_database();
 int added = 0;
 
 
@@ -18,19 +18,17 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("Бухгалтерский учёт");
     QIcon icon("app.ico");
     this->setWindowIcon(icon);
-
 }
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
 void MainWindow::load_database(){
     if (number_of_workers) {
             vector<worker> workers_from_database;
-            dataobj.read_from_database(workers_from_database, number_of_workers);
+            db1.read_from_database(workers_from_database);
             auto iter = this->workers.cbegin();
             this->workers.insert(iter, workers_from_database.begin(), workers_from_database.end());
         }
@@ -78,8 +76,7 @@ void MainWindow::add_new_worker(string* worker_info, double salary){
     new_worker.set_department(worker_info[3]);
     new_worker.set_salary(ui->salary->text().toDouble());
     this->workers.push_back(new_worker);
-    dataobj.write_into_database(this->workers);
-    dataobj.update_number_of_workers_in_database("number_of_workers_in_database.txt",number_of_workers);
+    db1.write_into_database(this->workers);
 }
 void MainWindow::on_buttonBox_accepted()
 {
@@ -89,8 +86,8 @@ void MainWindow::on_buttonBox_accepted()
     string worker_info[4] = { ui->name->text().toStdString(), ui->surname->text().toStdString(), ui->fathername->text().toStdString(), ui->department->text().toStdString()};
     add_new_worker(worker_info, ui->salary->text().toDouble());
     set_table(ui->tableWidget,
-              ui->name->text().toStdString(),
               ui->surname->text().toStdString(),
+              ui->name->text().toStdString(),
               ui->fathername->text().toStdString(),
               ui->department->text().toStdString(),
               ui->salary->text().toDouble(),
@@ -120,9 +117,8 @@ void MainWindow::delete_worker() {
     if (x > 0 && x <= this->workers.size()) {
         auto iter1 = workers.begin() + x - 1;
         workers.erase(iter1);
-        dataobj.write_into_database(this->workers);
-        dataobj.update_number_of_workers_in_database("number_of_workers_in_database.txt",--number_of_workers);
-        set_tables(ui->tableWidget, this->workers, number_of_workers);
+        db1.write_into_database(this->workers);
+        set_tables(ui->tableWidget, this->workers, --number_of_workers);
     }
     else {
         QMessageBox::information(this, "Внимание", "Такого работника не существует.");
@@ -224,12 +220,12 @@ vector<worker> MainWindow::find(string x, int answer){
 void MainWindow::on_pushButton_2_clicked()
 {
 
-    double result = median_and_whole_salary();
+    double result = average_and_whole_salary();
     QString str = QString("Общая зарплата отделов равна %0, средняя зарплата отделов равна %1").arg(result).arg(result/number_of_workers);
     QMessageBox::information(this, "Общая и средняя зарплата",str);
 
 }
-double MainWindow::median_and_whole_salary(){ //average!!
+double MainWindow::average_and_whole_salary(){
     return accumulate(workers.begin(), workers.end(), 0.0, [](double res, const worker& p1) {
                 return res + p1.get_salary();
                 });
